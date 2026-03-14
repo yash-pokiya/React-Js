@@ -1,34 +1,61 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 const ChangeUser = () => {
-    const [Data, setData] = useState({userName : "Test_User" , role : "Tester" , photo: "https://i.pinimg.com/736x/b0/a7/21/b0a721f5598d36794d6f98ef5fd7be50.jpg"});
 
-    function Change(){
-    if(Data.userName === "Test_User"){
-    let newObj = {...Data};
-    newObj.userName = "devUser";
-    newObj.role = "Developer";
-    newObj.photo = "https://i.pinimg.com/736x/03/ab/ec/03abecebd5b1e6a30cec46662d853744.jpg"
-    setData(newObj)
-    }else{
-    let newObj = {...Data};
-    newObj.userName = "Test_User";
-    newObj.role = "Tester";
-    newObj.photo = "https://i.pinimg.com/736x/b0/a7/21/b0a721f5598d36794d6f98ef5fd7be50.jpg"
-    setData(newObj)
-    }
-}
+  const [user, setUser] = useState({
+    userName: "Test_User",
+    role: "Tester",
+    photo:
+      "https://i.pinimg.com/736x/b0/a7/21/b0a721f5598d36794d6f98ef5fd7be50.jpg",
+  });
+
+  const changeUser = () => {
+    setUser((prev) =>
+      prev.userName === "Test_User"
+        ? {
+            userName: "Dev_User",
+            role: "Developer",
+            photo:
+              "https://i.pinimg.com/736x/03/ab/ec/03abecebd5b1e6a30cec46662d853744.jpg",
+          }
+        : {
+            userName: "Test_User",
+            role: "Tester",
+            photo:
+              "https://i.pinimg.com/736x/b0/a7/21/b0a721f5598d36794d6f98ef5fd7be50.jpg",
+          }
+    );
+  };
 
   return (
     <>
-        <div className=' flex-col text-white font-bold text-2xl mx-auto text-center mt-10 px-4 py-2 bg-[#222] rounded-xl w-full max-w-sm h-auto'>
-            <img className='w-36 h-36 object-cover rounded-full my-4 mx-auto' src={Data.photo} alt="" />
-            <h1 className='bg-[#555] w-full rounded-xl px-4 py-2 active:bg-orange-500 mb-2'>{Data.userName}</h1>
-            <h3  className='bg-[#555] w-full rounded-xl px-4 py-2 active:bg-orange-500 mb-2'>{Data.role}</h3>
-            <button className='w-full bg-orange-500 px-4 py-2 my-2 rounded-xl hover:bg-orange-100 hover:text-orange-500 transition hover:scale-95 select-none' onClick={Change}>Switch User</button>
-        </div>
-    </>
-  )
-}
+    <div className="flex justify-center items-center min-h-screen bg-gray-900">
 
-export default ChangeUser
+      <div className="bg-gray-800 text-white w-full max-w-sm p-6 rounded-2xl shadow-xl text-center transition hover:scale-105">
+
+        <img
+          src={user.photo}
+          alt="profile"
+          className="w-32 h-32 object-cover rounded-full mx-auto border-4 border-orange-500 shadow-lg"
+        />
+
+        <h2 className="mt-4 text-2xl font-bold">{user.userName}</h2>
+
+        <p className="text-gray-400 mt-1">{user.role}</p>
+
+        <button
+          onClick={changeUser}
+          className="mt-6 w-full bg-orange-500 py-2 rounded-xl font-semibold hover:bg-orange-400 transition"
+        >
+          Switch User
+        </button>
+
+      </div>
+    </div>
+
+    
+    </>
+  );
+};
+
+export default ChangeUser;
