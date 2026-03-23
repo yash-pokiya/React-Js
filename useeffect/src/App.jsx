@@ -1,8 +1,11 @@
 import React from 'react'
+import ApiFetch from './components/ApiFetch'
 
 const App = () => {
   return (
-    <div className='text-2xl bg-black text-white'>App</div>
+    <>
+      <ApiFetch />
+    </>
   )
 }
 
