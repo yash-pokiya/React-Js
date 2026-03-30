@@ -1,6 +1,7 @@
 import { Star } from "lucide-react"; // Optional: Use any star icon library
 
 const ProductCard = ({ product_data }) => {
+  console.log(product_data)
   let discountPrice =
     product_data.price -
     (product_data.price * product_data.discountPercentage) / 100;
@@ -12,7 +13,7 @@ const ProductCard = ({ product_data }) => {
         {/* Discount Badge */}
         <div className="absolute top-4 left-4 bg-white px-3 py-1 shadow-sm">
           <span className="text-[#4db195] text-xs font-bold">
-            {product_data.discountPercentage}% off
+            {Math.floor(product_data.discountPercentage)}% off
           </span>   
         </div>
 

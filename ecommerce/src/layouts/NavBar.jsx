@@ -1,5 +1,6 @@
 import { Heart, Menu, Search, ShoppingBag, User2, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [ShowMenu, setShowMenu] = useState(false);
@@ -20,16 +21,19 @@ const Navbar = () => {
           {/* links */}
           <ul className="flex items-center justify-center gap-x-4 text-lg font-normal ">
             <li>
-              <a harf="">Home</a>
+              <Link to="/">Home</Link>
             </li>
             <li>
-              <a harf="">Collection</a>
+              <Link to="/collection">Collection</Link>
             </li>
             <li>
-              <a harf="">About</a>
+              <Link to="/shop">Shop</Link>
             </li>
             <li>
-              <a harf="">Contact</a>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/contact">Contact</Link>
             </li>
           </ul>
           {/* icons */}
@@ -80,16 +84,19 @@ const Navbar = () => {
               {/* links */}
               <ul className="flex flex-col items-center justify-center gap-y-14 text-3xl font-semibold ">
                 <li>
-                  <a harf="">Home</a>
+                  <Link to="/">Home</Link>
                 </li>
                 <li>
-                  <a harf="">Collection</a>
+                  <Link to="/collection">Collection</Link>
                 </li>
                 <li>
-                  <a harf="">About</a>
+                  <Link to="/shop">Shop</Link>
                 </li>
                 <li>
-                  <a harf="">Contact</a>
+                  <Link to="/about">About</Link>
+                </li>
+                <li>
+                  <Link to="/contact">Contact</Link>
                 </li>
               </ul>
             </div>
