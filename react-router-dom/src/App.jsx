@@ -1,29 +1,25 @@
-import React from "react";
-import Navbar from "./Layouts/Navbar";
-import Home from "./Pages/Home";
-import About from "./Pages/About";
-import Collection from "./Pages/Collection";
-import Contact from "./Pages/Contact";
-import Product from "./Pages/Product";
-import Footer from "./Layouts/Footer";
-import NotFound from "./Pages/NotFound";
-import { Route, Routes } from "react-router-dom";
+import React from 'react'
+import Header from './components/Header/Header'
+import Github from './components/Github/Github';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Footer from './components/Footer/Footer';
+import Home from './Pages/Home';
+import CheckBox from './components/CheckBox';
+import Clock from './components/Clock';
 
 const App = () => {
   return (
-    <>
-      <Navbar />
+    <BrowserRouter>
+      <Header/> 
+      {/* <CheckBox/> */}
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/product" element={<Product />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/product/collection" element={<Collection/>} />
-        <Route path="*" element={<NotFound />} />
+        <Route path='/github' element={<Github/>}/>
+        <Route path='/' element={<Home/>}/>
+        <Route path='/clock' element={<Clock/>}/>
       </Routes>
-      <Footer />
-    </>
-  );
-};
+      <Footer/>
+    </BrowserRouter>
+  )
+}
 
-export default App;
+export default App
