@@ -1,12 +1,12 @@
 
-import Login from './components/Login'
 import UserContextProvider from './context/UserContextProvider'
+import Profile from './components/Profile'
 
 const App = () => {
   return (
     <>
       <UserContextProvider>
-        <Login />
+        <Profile/>
       </UserContextProvider>
     </>
   )
