@@ -1,25 +1,31 @@
-import React from 'react'
-import Header from './components/Header/Header'
-import Github from './components/Github/Github';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Footer from './components/Footer/Footer';
-import Home from './Pages/Home';
-import CheckBox from './components/CheckBox';
-import Clock from './components/Clock';
+import Header from "./components/Header/Header";
+import {
+  BrowserRouter,
+  Link,
+  NavLink,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
+import Footer from "./components/Footer/Footer";
+import Home from "./Pages/Home";
+import Post from "./components/Post";
+import Form from "./components/Form";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Header/> 
-      {/* <CheckBox/> */}
+      <Header />
       <Routes>
-        <Route path='/github' element={<Github/>}/>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/clock' element={<Clock/>}/>
+        {/* <Route path="/" element={<Home />} />
+        <Route path="/post/:id" element={<Post />} /> */}
+        <Route path="/" element={<Form />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default App
+
+
+export default App;

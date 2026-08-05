@@ -1,0 +1,23 @@
+/* Global reset and font import */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #050302;
+  color: #f3e9d8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessible focus ring */
+:focus-visible {
+  outline: 2px solid #e2a03f;
+  outline-offset: 3px;
+  border-radius: 4px;
+}

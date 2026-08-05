@@ -1,0 +1,18 @@
+/* GooeyNav.css — kept minimal; all layout/style is now handled inline/via Tailwind */
+
+.nav-link-item {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-link-item:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}

@@ -1,0 +1,809 @@
+{
+  "project": {
+    "name": "crud-ecommerce",
+    "description": "E-commerce backend using Express and raw MySQL2 queries",
+    "baseUrl": "/",
+    "authType": "JWT",
+    "tokenStorage": "cookie"
+  },
+  "envKeys": [
+    "PORT",
+    "JWT_SECRET"
+  ],
+  "models": [
+    {
+      "name": "users",
+      "fields": [
+        { "name": "id", "type": "number", "required": true, "notes": "Primary Key" },
+        { "name": "fullname", "type": "string", "required": true, "notes": "" },
+        { "name": "username", "type": "string", "required": true, "notes": "" },
+        { "name": "email", "type": "string", "required": true, "notes": "" },
+        { "name": "password", "type": "string", "required": true, "notes": "Hashed string" },
+        { "name": "address", "type": "string", "required": false, "notes": "" },
+        { "name": "isAdmin", "type": "number", "required": false, "notes": "1 for admin" }
+      ]
+    },
+    {
+      "name": "products",
+      "fields": [
+        { "name": "id", "type": "number", "required": true, "notes": "Primary Key" },
+        { "name": "product_name", "type": "string", "required": true, "notes": "" },
+        { "name": "description", "type": "string", "required": true, "notes": "" },
+        { "name": "price", "type": "number", "required": true, "notes": "" },
+        { "name": "stock", "type": "number", "required": true, "notes": "" },
+        { "name": "category_id", "type": "number", "required": false, "notes": "" },
+        { "name": "category", "type": "string", "required": false, "notes": "" }
+      ]
+    },
+    {
+      "name": "orders",
+      "fields": [
+        { "name": "id", "type": "number", "required": true, "notes": "Primary Key" },
+        { "name": "user_id", "type": "number", "required": true, "notes": "Foreign Key to users" },
+        { "name": "product_id", "type": "number", "required": true, "notes": "Foreign Key to products" },
+        { "name": "amount", "type": "number", "required": true, "notes": "Total amount" },
+        { "name": "quantity", "type": "number", "required": true, "notes": "" },
+        { "name": "status", "type": "string", "required": false, "notes": "" },
+        { "name": "created_at", "type": "string", "required": false, "notes": "Date string" }
+      ]
+    },
+    {
+      "name": "categories",
+      "fields": [
+        { "name": "id", "type": "number", "required": true, "notes": "Primary Key" },
+        { "name": "category_name", "type": "string", "required": true, "notes": "" },
+        { "name": "description", "type": "string", "required": true, "notes": "" }
+      ]
+    },
+    {
+      "name": "addresses",
+      "fields": [
+        { "name": "id", "type": "number", "required": true, "notes": "Primary Key" },
+        { "name": "user_id", "type": "number", "required": true, "notes": "Foreign Key to users" },
+        { "name": "address", "type": "string", "required": true, "notes": "" },
+        { "name": "city", "type": "string", "required": true, "notes": "" },
+        { "name": "state", "type": "string", "required": false, "notes": "" },
+        { "name": "pincode", "type": "string", "required": false, "notes": "" },
+        { "name": "country", "type": "string", "required": false, "notes": "Defaults to India" }
+      ]
+    },
+    {
+      "name": "cart",
+      "fields": [
+        { "name": "user_id", "type": "number", "required": true, "notes": "Foreign Key to users" },
+        { "name": "product_id", "type": "number", "required": true, "notes": "Foreign Key to products" },
+        { "name": "quantity", "type": "number", "required": true, "notes": "Defaults to 1" }
+      ]
+    },
+    {
+      "name": "reviews",
+      "fields": [
+        { "name": "user_id", "type": "number", "required": true, "notes": "Foreign Key to users" },
+        { "name": "product_id", "type": "number", "required": true, "notes": "Foreign Key to products" },
+        { "name": "rating", "type": "number", "required": true, "notes": "Between 1 and 5" },
+        { "name": "review", "type": "string", "required": false, "notes": "" },
+        { "name": "created_at", "type": "string", "required": false, "notes": "Date string" }
+      ]
+    },
+    {
+      "name": "wishlists",
+      "fields": [
+        { "name": "user_id", "type": "number", "required": true, "notes": "Foreign Key to users" },
+        { "name": "product_id", "type": "number", "required": true, "notes": "Foreign Key to products" },
+        { "name": "created_at", "type": "string", "required": false, "notes": "Date string" }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "auth": false,
+      "description": "Health check route",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "message": "hello from server"
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/user/register",
+      "auth": false,
+      "description": "Register a new user",
+      "requestBody": {
+        "fullname": "John Doe",
+        "username": "johndoe",
+        "email": "john@example.com",
+        "password": "password123",
+        "address": "123 Main St"
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "User register successfully..!",
+        "Created User": {
+          "id": 1,
+          "fullname": "John Doe",
+          "username": "johndoe",
+          "email": "john@example.com"
+        }
+      },
+      "errorResponses": [
+        { "status": 200, "message": "All fields must be required..!" },
+        { "status": 500, "message": "Internal Server Error message" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/user/login",
+      "auth": false,
+      "description": "Login user and get token",
+      "requestBody": {
+        "username": "johndoe",
+        "email": "john@example.com",
+        "password": "password123"
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "USer Login Successfully..!",
+        "loginuser": {
+          "id": 1,
+          "email": "john@example.com",
+          "username": "johndoe"
+        }
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Email OR Username OR Password Not Match..!" },
+        { "status": 404, "message": "User not found" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/user/edit-profile",
+      "auth": true,
+      "description": "Edit user profile",
+      "requestBody": {
+        "fullname": "John Doe Updated",
+        "username": "johndoe2",
+        "email": "john2@example.com"
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "User Updated successfull..!",
+        "note": "Return only the updated fields...!",
+        "updatedUser": {
+          "username": "johndoe2",
+          "fullname": "John Doe Updated",
+          "email": "john2@example.com"
+        }
+      },
+      "errorResponses": [
+        { "status": 200, "message": "Require atleast one fiend..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/user/logout",
+      "auth": true,
+      "description": "Logout user",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "logout successful"
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/user/abc",
+      "auth": true,
+      "description": "Test route for user",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "message": "heyy from user route"
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/user/delete-account",
+      "auth": true,
+      "description": "Delete user account",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "User delete successfull..!",
+        "deletedUser": {
+          "deleteUser": [{ "username": "johndoe", "email": "j@e.com", "fullname": "John" }],
+          "userId": 1
+        }
+      },
+      "errorResponses": [
+        { "status": 400, "message": "User Not LoggedIn..!" },
+        { "status": 404, "message": "User Not found..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/product/add",
+      "auth": true,
+      "description": "Admin add product",
+      "requestBody": {
+        "productName": "Laptop",
+        "description": "Gaming laptop",
+        "price": 1000,
+        "stock": 10,
+        "categoryId": 1
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Product Added Successfully..!",
+        "product": {
+          "product_name": "Laptop",
+          "description": "Gaming laptop",
+          "price": 1000,
+          "stock": 10,
+          "categoryId": 1
+        }
+      },
+      "errorResponses": [
+        { "status": 200, "message": "All fields must be required for add product..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/product/all",
+      "auth": false,
+      "description": "Get all products",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Products fetched success..!",
+        "products": [
+          { "id": 1, "product_name": "Laptop", "price": 1000 }
+        ]
+      },
+      "errorResponses": [
+        { "status": 404, "message": "No any Product found..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/product/get/:id",
+      "auth": false,
+      "description": "Get single product",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Product fetched success..!",
+        "products": { "id": 1, "product_name": "Laptop" }
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/product/edit/:id",
+      "auth": true,
+      "description": "Admin edit product",
+      "requestBody": {
+        "productName": "Laptop",
+        "description": "Updated desc",
+        "price": 1200,
+        "stock": 5,
+        "category": "Electronics"
+      },
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Product Updated successfull..!",
+        "note": "Return only the updated fields...!",
+        "updatedUser": {
+          "productName": "Laptop",
+          "description": "Updated desc",
+          "price": 1200,
+          "stock": 5,
+          "category": "Electronics"
+        }
+      },
+      "errorResponses": [
+        { "status": 200, "message": "All fields must be required for add product..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/product/delete/:id",
+      "auth": true,
+      "description": "Admin delete product",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Product deleted successfull..!",
+        "deletedUser": { "id": 1, "product_name": "Laptop" }
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Product not found or already deleted..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/order/see-order",
+      "auth": true,
+      "description": "See user orders",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Product fetch successfull..!",
+        "product": [
+          [ { "id": 1, "total_amount": 1000, "product_name": "Laptop" } ]
+        ]
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Orders not found..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/order/check-all",
+      "auth": true,
+      "description": "Admin check all orders",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "orders fetch successfull..!",
+        "orders": [
+          { "fullname": "John", "product_name": "Laptop", "amount": 1000 }
+        ]
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/order/create/:id",
+      "auth": true,
+      "description": "Create order for product",
+      "requestBody": {
+        "quantity": 2
+      },
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "order create successfully..!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Enter Qantity" },
+        { "status": 400, "message": "Product Not Found..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "PUT",
+      "path": "/order/status/:id",
+      "auth": true,
+      "description": "Update order status",
+      "requestBody": {
+        "status": "Shipped"
+      },
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "status updated on orderId : 1..!"
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/category/create",
+      "auth": true,
+      "description": "Admin create category",
+      "requestBody": {
+        "categoryName": "Electronics",
+        "description": "Gadgets and devices"
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "category added success..!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Must be enter category_name and description" },
+        { "status": 400, "message": "Category already exist..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/category/categories",
+      "auth": false,
+      "description": "Get all categories",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "category fetched successfully..!",
+        "categories": [
+          { "id": 1, "category_name": "Electronics" }
+        ]
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "PUT",
+      "path": "/category/update/:id",
+      "auth": true,
+      "description": "Admin update category",
+      "requestBody": {
+        "categoryName": "Computers",
+        "description": "PCs and Laptops"
+      },
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "update category successful where id is 1",
+        "note": "show only fields that updated",
+        "updateField": {
+          "category name": "Computers",
+          "description": "PCs and Laptops"
+        }
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Must be enter category_name and description" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/category/delete/:id",
+      "auth": true,
+      "description": "Admin delete category",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Category delete success..!",
+        "deleted category": "Electronics"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Category Not Found..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/address/add",
+      "auth": true,
+      "description": "Add user address",
+      "requestBody": {
+        "address": "123 Main St",
+        "city": "Metropolis",
+        "state": "NY",
+        "pincode": "10001",
+        "country": "USA"
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "address saved..!",
+        "address": {
+          "userId": 1,
+          "address": "123 Main St",
+          "city": "Metropolis",
+          "state": "NY",
+          "pincode": "10001",
+          "country": "USA"
+        }
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Address and city must be required..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/address/get-all",
+      "auth": true,
+      "description": "Get all user addresses",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "addresses": [
+          { "id": 1, "address": "123 Main St", "city": "Metropolis" }
+        ]
+      },
+      "errorResponses": [
+        { "status": 201, "message": "You still dont save any address..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/address/delete/:id",
+      "auth": true,
+      "description": "Delete user address",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "address deleted successfully..!"
+      },
+      "errorResponses": [
+        { "status": 401, "message": "address not found in your account..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/cart/add",
+      "auth": true,
+      "description": "Add to cart",
+      "requestBody": {
+        "productId": 1,
+        "quantity": 2
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Product Added to cart..!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Must enter productId..!" },
+        { "status": 400, "message": "Product Not Found..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/cart/view-cart",
+      "auth": true,
+      "description": "View cart",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Cart fetched Successfully..!",
+        "cart": [
+          { "userId": 1, "username": "johndoe", "productId": 1, "product_name": "Laptop", "price": 1000 }
+        ]
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "PUT",
+      "path": "/cart/update",
+      "auth": true,
+      "description": "Update cart quantity",
+      "requestBody": {
+        "productId": 1,
+        "quantity": 3
+      },
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Cart update Successfully..!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Must enter productId and quantity" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/cart/delete/:id",
+      "auth": true,
+      "description": "Delete item from cart",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Cart item deleted Successfully..!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "can't get productId " }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/cart/clear",
+      "auth": true,
+      "description": "Clear entire cart",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Cart clear Successfully..!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "cart already clear..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/review/product/:id",
+      "auth": true,
+      "description": "Submit a review",
+      "requestBody": {
+        "rating": 5,
+        "review": "Great product!"
+      },
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "review sublited successfully.!!"
+      },
+      "errorResponses": [
+        { "status": 400, "message": "Must enter rating..!" },
+        { "status": 400, "message": "review already submited for this product from this account..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/review/product/all/:id",
+      "auth": true,
+      "description": "Get reviews for a product",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "All review ferched..!",
+        "reviews": [
+          { "username": "johndoe", "review": "Great product!", "rating": 5, "average_rating": 4.5 }
+        ]
+      },
+      "errorResponses": [
+        { "status": 201, "message": "Product still not have review or rating..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "POST",
+      "path": "/wishlist/add/:id",
+      "auth": true,
+      "description": "Add product to wishlist",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "product added to wishlist success..!"
+      },
+      "errorResponses": [
+        { "status": 404, "message": "product is not available..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/wishlist/see",
+      "auth": true,
+      "description": "See wishlist items",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "product fetch from wishlist success..!",
+        "wishlist": [
+          { "product_name": "Laptop", "price": 1000, "product_id": 1, "user_id": 1 }
+        ]
+      },
+      "errorResponses": [
+        { "status": 404, "message": "wishlist is empty" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "DELETE",
+      "path": "/wishlist/remove/:id",
+      "auth": true,
+      "description": "Remove item from wishlist",
+      "requestBody": {},
+      "requestParams": ["id"],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "product remove from wishlist..!"
+      },
+      "errorResponses": [
+        { "status": 404, "message": "Wishlist is Empty or can't find this item in your account..!" }
+      ],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/admin/stats/sales",
+      "auth": true,
+      "description": "Get sales stats",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Report generated..!",
+        "all time total sale ": 5000,
+        "report": [
+          { "fullname": "John", "email": "john@e.com", "product_name": "Laptop", "price": 1000, "quantity": 1, "total": 1000 }
+        ]
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/admin/stats/users",
+      "auth": true,
+      "description": "Get users stats",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Report generated..!",
+        "totalUser": 10,
+        "users": [
+          { "username": "johndoe", "email": "j@e.com", "fullname": "John" }
+        ]
+      },
+      "errorResponses": [],
+      "emits": ""
+    },
+    {
+      "method": "GET",
+      "path": "/admin/stats/top-products",
+      "auth": true,
+      "description": "Get top products",
+      "requestBody": {},
+      "requestParams": [],
+      "requestQuery": [],
+      "successResponse": {
+        "msg": "Report generated..!",
+        "top": [
+          { "id": 1, "product_name": "Laptop", "price": 1000, "total_quantity_sold": 50, "total_sales": 50000 }
+        ]
+      },
+      "errorResponses": [],
+      "emits": ""
+    }
+  ],
+  "socketEvents": {
+    "server_to_client": [],
+    "client_to_server": []
+  },
+  "middleware": [
+    "express.json()",
+    "cookieparser()",
+    "morgan(\"dev\")",
+    "authMiddleware",
+    "adminAuth"
+  ],
+  "notes": "Backend utilizes raw MySQL queries with mysql2 package. No ORM."
+}

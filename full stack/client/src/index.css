@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties ────────────────────────────── */
+:root {
+  /* Light theme (default) */
+  --color-bg:              #F4F4F5;
+  --color-surface:         #FFFFFF;
+  --color-surface-secondary: #F4F4F5;
+  --color-card:            #FFFFFF;
+  --color-border:          #E4E4E7;
+  --color-border-hover:    #D4D4D8;
+  --color-text-primary:    #09090b;
+  --color-text-secondary:  #52525b;
+  --color-text-muted:      #71717a;
+  --color-input:           #F4F4F5;
+  --color-hover-subtle:    rgba(0, 0, 0, 0.04);
+  --color-hover-white5:    rgba(0, 0, 0, 0.06);
+  --color-navbar-bg:       rgba(255, 255, 255, 0.85);
+  --color-navbar-border:   rgba(0, 0, 0, 0.08);
+  --color-scrollbar:       #D4D4D8;
+  --color-scrollbar-hover: #A1A1AA;
+  --shimmer-base:          #E4E4E7;
+  --shimmer-highlight:     #F4F4F5;
+  --color-nav-pill:        rgba(0, 0, 0, 0.05);
+  --color-nav-pill-border: rgba(0, 0, 0, 0.08);
+}
+
+.dark {
+  /* Dark theme — matches original design */
+  --color-bg:              #000000;
+  --color-surface:         #09090b;
+  --color-surface-secondary: #18181b;
+  --color-card:            #09090b;
+  --color-border:          #27272a;
+  --color-border-hover:    #3f3f46;
+  --color-text-primary:    #fafafa;
+  --color-text-secondary:  #a1a1aa;
+  --color-text-muted:      #52525b;
+  --color-input:           #18181b;
+  --color-hover-subtle:    rgba(255, 255, 255, 0.04);
+  --color-hover-white5:    rgba(255, 255, 255, 0.05);
+  --color-navbar-bg:       rgba(0, 0, 0, 0.80);
+  --color-navbar-border:   rgba(255, 255, 255, 0.05);
+  --color-scrollbar:       #3f3f46;
+  --color-scrollbar-hover: #52525b;
+  --shimmer-base:          #18181b;
+  --shimmer-highlight:     #27272a;
+  --color-nav-pill:        rgba(255, 255, 255, 0.05);
+  --color-nav-pill-border: rgba(255, 255, 255, 0.10);
+}
+
+/* ─── Base ─────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-scrollbar-hover);
+  }
+}
+
+/* ─── Semantic Utilities ────────────────────────────────── */
+@layer utilities {
+  /* Backgrounds */
+  .bg-surface         { background-color: var(--color-surface); }
+  .bg-surface-secondary { background-color: var(--color-surface-secondary); }
+  .bg-card            { background-color: var(--color-card); }
+  .bg-input-field     { background-color: var(--color-input); }
+
+  /* Text */
+  .text-primary       { color: var(--color-text-primary); }
+  .text-secondary     { color: var(--color-text-secondary); }
+  .text-muted         { color: var(--color-text-muted); }
+
+  /* Borders */
+  .border-default     { border-color: var(--color-border); }
+  .border-hover:hover { border-color: var(--color-border-hover); }
+  .divide-default > * + * { border-color: var(--color-border); }
+
+  /* Hover utilities */
+  .hover-subtle:hover { background-color: var(--color-hover-subtle); }
+  .hover-white5:hover { background-color: var(--color-hover-white5); }
+
+  /* Navbar */
+  .navbar-scrolled {
+    background-color: var(--color-navbar-bg);
+    border-color: var(--color-navbar-border);
+  }
+  .nav-pill {
+    background-color: var(--color-nav-pill);
+    border-color: var(--color-nav-pill-border);
+  }
+
+  /* Legacy utility aliases (keep existing behavior) */
+  .glass {
+    background-color: var(--color-navbar-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--color-navbar-border);
+  }
+  .glass-solid {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  }
+
+  /* Shimmer */
+  .shimmer-bg {
+    background: linear-gradient(90deg, var(--shimmer-base) 25%, var(--shimmer-highlight) 50%, var(--shimmer-base) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  /* Brand utilities (unchanged) */
+  .gradient-text {
+    @apply bg-gradient-to-r from-orange-400 to-[#F23F0C] bg-clip-text text-transparent font-bold;
+  }
+  .btn-gradient {
+    @apply bg-gradient-to-r from-orange-500 to-[#F23F0C] text-white shadow-lg hover:shadow-orange-500/20 transition-all duration-300;
+  }
+  .btn-gradient:hover {
+    @apply opacity-90 scale-[1.02];
+  }
+
+  /* Marquee */
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--marquee-duration, 40s) linear infinite;
+  }
+}
+
+/* ─── Keyframes ─────────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
