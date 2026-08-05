@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import supabase from '../supabaseConfig'
-import { MdDeleteForever } from "react-icons/md";
+import { MdCancel, MdDeleteForever } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { IoMdDoneAll } from "react-icons/io";
 import { useAuth } from '../context/AuthContext';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 const Smoothies = () => {
     const { isAdmin } = useAuth()
@@ -125,37 +127,44 @@ const Smoothies = () => {
                                 {edit && editedId === smoothie.id ? (
                                     <div className="flex flex-col gap-3">
                                         <div className="flex gap-2 items-center">
-                                            <input 
-                                                type="text" 
-                                                className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                                value={editedTitle} 
-                                                onChange={(e) => setEditedTitle(e.target.value)} 
-                                                placeholder="Title"
+                                            <TextField
+                                                type="text"
+                                                value={editedTitle}
+                                                onChange={(e) => setEditedTitle(e.target.value)}
+                                                label="Title"
                                             />
-                                            <input
-                                                className="w-24 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            <TextField
+                                                variant='outlined'
                                                 type="number"
                                                 max={5}
                                                 min={1}
-                                                placeholder="Rating"
+                                                label="Rating"
                                                 value={editedRating}
                                                 onChange={(e) => setEditedRating(e.target.value)}
                                             />
                                         </div>
-                                        <input 
-                                            type="text" 
-                                            className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                            value={editedMethod} 
-                                            onChange={(e) => setEditedMethod(e.target.value)} 
-                                            placeholder="Method"
+                                        <TextField
+                                            variant='outlined'
+                                            label="Method"
+                                            type="text"
+                                            value={editedMethod}
+                                            onChange={(e) => setEditedMethod(e.target.value)}
                                         />
-                                        <div className="flex justify-end mt-1">
-                                            <button 
-                                                onClick={() => saveEdit(smoothie.id)} 
-                                                className="bg-blue-500 text-white px-3 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center"
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                onClick={() => saveEdit(smoothie.id)}
+                                                variant='contained'
+                                                color='success'
                                             >
                                                 <IoMdDoneAll className="text-lg" />
-                                            </button>
+                                            </Button>
+                                             <Button
+                                                onClick={() => setEdit(false)}
+                                                variant='contained'
+                                                color='error'
+                                            >
+                                                <MdCancel className="text-lg" />
+                                            </Button>
                                         </div>
                                     </div>
                                 ) : (
@@ -178,18 +187,20 @@ const Smoothies = () => {
                                         <img className='object-cover h-40 w-40 my-2' src={smoothie.image_url} alt="" />
                                         {isAdmin && (
                                             <div className="flex items-center gap-2 mt-4">
-                                                <button 
-                                                    onClick={() => deleteSmoothies(smoothie.id)} 
-                                                    className="bg-red-500 text-white px-2.5 py-1.5 rounded hover:bg-red-600 transition flex items-center justify-center"
+                                                <Button
+                                                    onClick={() => deleteSmoothies(smoothie.id)}
+                                                    variant='contained'
+                                                    color='error'
                                                 >
                                                     <MdDeleteForever className="text-lg" />
-                                                </button>
-                                                <button 
-                                                    onClick={() => startEdit(smoothie)} 
-                                                    className="bg-blue-500 text-white px-2.5 py-1.5 rounded hover:bg-blue-600 transition flex items-center justify-center"
+                                                </Button>
+                                                <Button
+                                                    onClick={() => startEdit(smoothie)}
+                                                    variant='contained'
+                                                    color='primary'
                                                 >
                                                     <CiEdit className="text-lg" />
-                                                </button>
+                                                </Button>
                                             </div>
                                         )}
                                     </div>

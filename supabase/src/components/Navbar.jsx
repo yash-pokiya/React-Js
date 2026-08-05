@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Button from "@mui/material/Button";
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -12,36 +13,41 @@ const Navbar = () => {
           Store Dashboard
         </h1>
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate("/")} 
+          <Button
+            variant="contained"
+            onClick={() => navigate("/")}
             className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-md transition"
           >
             View
-          </button>
+          </Button >
 
           {isAdmin && (
-            <button 
-              onClick={() => navigate("/addsmoothies")} 
+            <Button
+            variant="contained"
+              onClick={() => navigate("/addsmoothies")}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"
             >
               Add
-            </button>
+            </Button>
           )}
 
           {user ? (
-            <button 
-              onClick={logout} 
+            <Button
+              variant="contained"
+              color="error"
+              onClick={logout}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
             >
               Logout
-            </button>
+            </Button>
           ) : (
-            <button 
-              onClick={() => navigate("/login")} 
+            <Button
+              variant="contained"
+              onClick={() => navigate("/login")}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"
             >
               Login
-            </button>
+            </Button>
           )}
         </div>
       </div>
